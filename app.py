@@ -24,7 +24,7 @@ def conectar_sheets():
     return gspread.authorize(creds)
 
 client = conectar_sheets()
-planilha = client.open_by_key('14quTHRoXfVNgIDV2mwym0P-cEH0-P9JI')
+planilha = client.open_by_key('1UnvAdmOGZi48Ap7BwXEq9aCfRZxJCldbl9r__c0OjY0')
 
 # --- 2. INTERFACE DO USUÁRIO ---
 st.title("📄 Gestor de Documentos - Prestação de Contas")
