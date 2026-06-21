@@ -3,6 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from PyPDF2 import PdfMerger
 import io
+import json # <-- Adicionado para ler o JSON dos secrets
 
 # --- 1. CONFIGURAÇÕES E CONEXÃO ---
 st.set_page_config(page_title="Gestor de Prestação de Contas", layout="wide")
@@ -10,13 +11,20 @@ st.set_page_config(page_title="Gestor de Prestação de Contas", layout="wide")
 @st.cache_resource
 def conectar_sheets():
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    # Na nuvem, usaremos st.secrets no lugar do arquivo json físico
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credenciais.json', scope)
+    
+    # Lê a string JSON armazenada de forma segura no Streamlit Cloud
+    cred_json_str = st.secrets["text_credentials"]
+    
+    # Converte a string de texto para um dicionário Python
+    cred_dict = json.loads(cred_json_str)
+    
+    # Usa o dicionário para autenticar (ao invés de buscar um arquivo físico)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict, scope)
+    
     return gspread.authorize(creds)
 
 client = conectar_sheets()
 planilha = client.open('Prestacao_de_Contas')
-
 # --- 2. INTERFACE DO USUÁRIO ---
 st.title("📄 Gestor de Documentos - Prestação de Contas")
 
